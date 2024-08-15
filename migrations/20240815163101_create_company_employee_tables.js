@@ -5,7 +5,7 @@
 export function up(knex) {
     return knex.schema
         .createTable("user", (table) => {
-            table.increments("id").primary();
+            table.string("id").primary();
             table.string("email").notNullable();
             table.string("password").notNullable();
             table.string("contact").notNullable().defaultTo("");
@@ -22,8 +22,7 @@ export function up(knex) {
             table.string("state").notNullable();
             table.string("country").notNullable();
             table.string("background", 1000).notNullable().defaultTo("");
-            table.integer("user_id")
-                .unsigned()
+            table.string("user_id")
                 .references("user.id")
                 .onUpdate("CASCADE")
                 .onDelete("CASCADE");
