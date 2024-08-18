@@ -11,6 +11,35 @@ const index = async (_req, res) => {
     }
 };
 
+const findSingleCompany = async (_req, res) => {
+    try {
+        const data = await knex("company").where({
+            user_id: _req.params.user_id,
+        });
+        console.log(data[0])
+        res.status(200).json(data[0]);
+    } catch (err) {
+        res.status(400).send(`Error retrieving Employees: ${err}`);
+    }
+};
+const findCompanyAndEmployees = async (_req, res) => {
+    try {
+        const data = await knex("company")
+            .where({
+                user_id: _req.params.user_id,
+            });
+        const employees = await knex
+            .select("employee.full_name", "employee.skills", "employee.job_title", "employee.experience_years")
+            .from("employee")
+            .where({
+                company_id: data[0].id,
+            })
+        console.log(data[0])
+        res.status(200).json({ ...data[0], 'employees': employees });
+    } catch (err) {
+        res.status(400).send(`Error retrieving Employees: ${err}`);
+    }
+};
 const add = async (req, res) => {
     const { name, industry, founded, city, state, country, background, user_id } = req.body;
     const newCompany = {
@@ -37,7 +66,7 @@ const add = async (req, res) => {
             });
         }
 
-        const result = await knex("company").insert(newCompany);
+        const result = await knex("company").insert(newCompany).returning("id");;
         const createdCompany = await knex("company").where({
             id: result[0],
         });
@@ -117,4 +146,4 @@ const update = async (req, res) => {
     }
 };
 
-export { index, add, remove, update };
+export { index, add, remove, update, findSingleCompany, findCompanyAndEmployees };

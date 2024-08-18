@@ -26,12 +26,13 @@ const add = async (req, res) => {
     };
     if (!email || !password) {
         return res.status(400).json({
-            message: "Please provide all information in the request",
+            email: "Please provide all information in the request",
+            password: "Please provide all information in the request",
         });
     }
     if (!isValidEmail(email)) {
         return res.status(400).json({
-            message: "Please provide valid email address in the request",
+            email: "Please provide valid email address in the request",
         });
     }
 
@@ -39,11 +40,12 @@ const add = async (req, res) => {
         const doesUserExist = await knex("user").where("email", email);
         if (doesUserExist.length > 0) {
             return res.status(400).json({
-                message: "User already exists",
+                email: "User already exists",
             });
         }
 
-        const result = await knex("user").insert(newUser);
+        const result = await knex("user").insert(newUser).returning("id");
+        console.log(result);
         const createdUser = await knex("user").where({
             id: result[0],
         });
@@ -59,30 +61,37 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
         return res.status(400).json({
-            message: "Please provide all information in the request",
+            email: "Please provide all information in the request",
+            password: "Please provide all information in the request",
         });
     }
     if (!isValidEmail(email)) {
         return res.status(400).json({
-            message: "Please provide valid email address in the request",
+            email: "Please provide valid email address in the request",
+            password: "Please provide valid email address in the request",
         });
     }
     try {
         const userData = await knex("user").where("email", email);
         if (userData.length === 0) {
             return res.status(400).json({
-                message: "User does not exist",
+                email: "User does not exist",
             });
         }
         if (userData[0].password !== password) {
             return res.status(400).json({
-                message: "Password does not match",
+                password: "Password does not match",
             });
         }
-        res.status(200).json({ message: "Successfully logged in" });
+        res.status(200).json(
+            {
+                user_id: userData[0].id,
+                message: "Successfully logged in"
+            }
+        );
     } catch (error) {
         res.status(500).json({
-            message: `Unable to find user: ${error}`,
+            email: `Unable to find user: ${error}`,
         });
     }
 };
@@ -113,9 +122,10 @@ const update = async (req, res) => {
         const { id, email, contact } =
             req.body;
         console.log("reqest body", req.body);
-        if (!email || !password || !contact) {
+        if (!email || !password) {
             return res.status(400).json({
-                message: "Missing informations",
+                email: "Missing informations",
+                password: "Missing informations",
             });
         }
 
@@ -123,7 +133,7 @@ const update = async (req, res) => {
             .where({ id: id })
             .first();
         if (!user) {
-            return res.status(400).json({ message: "User does not exist" });
+            return res.status(400).json({ email: "User does not exist" });
         }
 
         const rowsUpdated = await knex("user")
@@ -136,7 +146,7 @@ const update = async (req, res) => {
             });
 
         if (rowsUpdated === 0) {
-            return res.status(404).json({ message: `User ID is not found` });
+            return res.status(404).json({ email: `User ID is not found` });
         }
         const updatedUser = await knex("user")
             .where({

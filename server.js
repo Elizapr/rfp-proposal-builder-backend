@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import "dotenv/config";
 import geminiroutes from "./routes/gemini-routes.js";
+import ollamaroutes from "./routes/ollama-route.js";
 import userroutes from "./routes/user-routes.js";
 import companyRoutes from "./routes/company-routes.js";
 import employeeRoutes from "./routes/employee-routes.js";
@@ -12,6 +13,7 @@ app.use(express.json());
 const PORT = process.env.PORT;
 
 app.use("/generate", geminiroutes);
+app.use("/ollama/generate", ollamaroutes);
 
 app.use("/user", userroutes);
 

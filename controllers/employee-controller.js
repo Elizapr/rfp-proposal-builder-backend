@@ -4,8 +4,19 @@ const knex = initKnex(configuration);
 
 const index = async (_req, res) => {
     try {
-        const data = await knex("employee");
+        const data = await knex("employee")
+            .where("company_id", _req.params.company_id);
         res.status(200).json(data);
+    } catch (err) {
+        res.status(400).send(`Error retrieving Employees: ${err}`);
+    }
+};
+const findSingleEmployee = async (_req, res) => {
+    try {
+        const data = await knex("employee")
+            .where({ id: _req.params.id });
+        console.log(data[0])
+        res.status(200).json(data[0]);
     } catch (err) {
         res.status(400).send(`Error retrieving Employees: ${err}`);
     }
@@ -22,7 +33,7 @@ const add = async (req, res) => {
     };
     if (!full_name || !skills || !job_title || !experience_years || !company_id) {
         return res.status(400).json({
-            message: "Please provide all information in the request",
+            full_name: "Please provide all information in the request",
         });
     }
 
@@ -34,7 +45,7 @@ const add = async (req, res) => {
             });
         }
 
-        const result = await knex("employee").insert(newEmployee);
+        const result = await knex("employee").insert(newEmployee).returning("id");
         const createdEmployee = await knex("employee").where({
             id: result[0],
         });
@@ -69,17 +80,17 @@ const remove = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { id, full_name, skills, job_title, experience_years, company_id } =
+        const { full_name, skills, job_title, experience_years, company_id } =
             req.body;
         console.log("reqest body", req.body);
-        if (!full_name || !skills || !job_title || !experience_years || !company_id) {
+        if (!full_name || !skills || !job_title || !experience_years) {
             return res.status(400).json({
                 message: "Missing informations",
             });
         }
 
         const data = await knex("employee")
-            .where({ id: id })
+            .where({ id: req.params.id })
             .first();
         if (!data) {
             return res.status(400).json({ message: "Employee does not exist" });
@@ -87,7 +98,7 @@ const update = async (req, res) => {
 
         const rowsUpdated = await knex("employee")
             .where({
-                id: id,
+                id: req.params.id,
             })
             .update({
                 full_name,
@@ -102,7 +113,7 @@ const update = async (req, res) => {
         }
         const updatedData = await knex("employee")
             .where({
-                "id": id,
+                "id": req.params.id,
             })
             .first();
         res.status(200).json(updatedData[0]);
@@ -112,4 +123,4 @@ const update = async (req, res) => {
     }
 };
 
-export { index, add, remove, update };
+export { index, add, remove, update, findSingleEmployee };

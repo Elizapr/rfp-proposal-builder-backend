@@ -4,10 +4,14 @@ const router = express.Router();
 
 
 router.route("/")
-    .get(employeeController.index)
     .post(employeeController.add)
-    .put(employeeController.update);
 
-router.route("/:id").delete(employeeController.remove);
+
+router.route("/:company_id/employees").get(employeeController.index);
+
+router.route("/:id")
+    .get(employeeController.findSingleEmployee)
+    .put(employeeController.update)
+    .delete(employeeController.remove);
 
 export default router;

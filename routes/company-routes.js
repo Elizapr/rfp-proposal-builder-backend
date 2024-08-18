@@ -8,6 +8,9 @@ router.route("/")
     .post(companyController.add)
     .put(companyController.update);
 
+router.route("/:user_id").get(companyController.findSingleCompany);
+router.route("/:user_id/companyAndEmployees").get(companyController.findCompanyAndEmployees);
+
 router.route("/:id").delete(companyController.remove);
 
 export default router;
