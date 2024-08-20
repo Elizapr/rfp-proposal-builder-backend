@@ -16,7 +16,6 @@ const findSingleCompany = async (_req, res) => {
         const data = await knex("company").where({
             user_id: _req.params.user_id,
         });
-        console.log(data[0])
         res.status(200).json(data[0]);
     } catch (err) {
         res.status(400).send(`Error retrieving Employees: ${err}`);
@@ -34,7 +33,6 @@ const findCompanyAndEmployees = async (_req, res) => {
             .where({
                 company_id: data[0].id,
             })
-        console.log(data[0])
         res.status(200).json({ ...data[0], 'employees': employees });
     } catch (err) {
         res.status(400).send(`Error retrieving Employees: ${err}`);
@@ -103,7 +101,6 @@ const update = async (req, res) => {
     try {
         const { name, industry, founded, city, state, country, background } =
             req.body;
-        console.log("reqest body", req.body);
         if (!name || !industry || !founded || !city || !state || !country || !background) {
             return res.status(400).json({
                 message: "Missing informations",

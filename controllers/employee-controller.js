@@ -15,7 +15,6 @@ const findSingleEmployee = async (_req, res) => {
     try {
         const data = await knex("employee")
             .where({ id: _req.params.id });
-        console.log(data[0])
         res.status(200).json(data[0]);
     } catch (err) {
         res.status(400).send(`Error retrieving Employees: ${err}`);
@@ -82,7 +81,6 @@ const update = async (req, res) => {
     try {
         const { full_name, skills, job_title, experience_years, company_id } =
             req.body;
-        console.log("reqest body", req.body);
         if (!full_name || !skills || !job_title || !experience_years) {
             return res.status(400).json({
                 message: "Missing informations",

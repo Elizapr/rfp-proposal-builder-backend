@@ -45,7 +45,6 @@ const add = async (req, res) => {
         }
 
         const result = await knex("user").insert(newUser).returning("id");
-        console.log(result);
         const createdUser = await knex("user").where({
             id: result[0],
         });
@@ -121,7 +120,6 @@ const update = async (req, res) => {
     try {
         const { id, email, contact } =
             req.body;
-        console.log("reqest body", req.body);
         if (!email || !password) {
             return res.status(400).json({
                 email: "Missing informations",

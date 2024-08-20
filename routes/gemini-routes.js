@@ -9,7 +9,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.post("/summarize", async (_req, res) => {
     try {
-        console.log("reached");
         const prompt = `You are a professional bid proposal writer for RFPs. Can you give me a detailed summary of below Rfp document text. Please provide evaluation criteria and the mandatory information that the proposal requires to be included for writing a winning bid proposal?: ${_req.body.prompt}`;
 
         const result = await model.generateContent(prompt);
