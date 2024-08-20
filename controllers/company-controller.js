@@ -101,7 +101,7 @@ const remove = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const { id, name, industry, founded, city, state, country, background } =
+        const { name, industry, founded, city, state, country, background } =
             req.body;
         console.log("reqest body", req.body);
         if (!name || !industry || !founded || !city || !state || !country || !background) {
@@ -111,7 +111,7 @@ const update = async (req, res) => {
         }
 
         const data = await knex("company")
-            .where({ id: id })
+            .where({ id: req.params.company_id })
             .first();
         if (!data) {
             return res.status(400).json({ message: "Company does not exist" });
@@ -119,7 +119,7 @@ const update = async (req, res) => {
 
         const rowsUpdated = await knex("company")
             .where({
-                id: id,
+                id: req.params.company_id,
             })
             .update({
                 name,
@@ -136,7 +136,7 @@ const update = async (req, res) => {
         }
         const updatedData = await knex("company")
             .where({
-                "id": id,
+                "id": req.params.company_id,
             })
             .first();
         res.status(200).json(updatedData[0]);
